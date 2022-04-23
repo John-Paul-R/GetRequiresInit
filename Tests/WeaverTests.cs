@@ -31,10 +31,6 @@ public class WeaverTests
         var instance = (dynamic)Activator.CreateInstance(type)!;
 
         var method = type.GetProperty("CheckedIntField")!.GetMethod;
-        // var outStr = string.Join("","", methods);
-        // throw new NullReferenceException(string.Join("","", type.GetMethods()));
-        // var val = instance.get_Class2IntField();
-        // Console.WriteLine(val);
         bool threwInvalidOperationException = false;
         try {
             method!.Invoke(instance, Array.Empty<object?>());
@@ -57,8 +53,6 @@ public class WeaverTests
 
         var method = type.GetProperty(propertyName)!.GetMethod;
 
-        // var field = type.GetField("_initFlag_Class2IntField", BindingFlags.NonPublic | BindingFlags.Instance);
-        
         bool threwInvalidOperationException = false;
         int outVal = 1031231;
         try {
@@ -84,7 +78,6 @@ public class WeaverTests
         var getMethod = prop.GetMethod!;
         var setMethod = prop.SetMethod!;
 
-        // var field = type.GetField("_initFlag_Class2IntField", BindingFlags.NonPublic | BindingFlags.Instance);
         int valueToSet = 1031231;
         setMethod.Invoke(instance, new object?[1] {valueToSet});
         
