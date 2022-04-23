@@ -15,15 +15,6 @@ public class WeaverTests
         testResult = weavingTask.ExecuteTestRun("ExampleAssemblyToProcess.dll");
     }
 
-    [Fact]
-    public void ValidateHelloWorldIsInjected()
-    {
-        var type = testResult.Assembly.GetType("TheNamespace.Hello")!;
-        var instance = (dynamic)Activator.CreateInstance(type)!;
-
-        Assert.Equal("Hello World", instance.World());
-    }
-
     [Theory]
     [InlineData("Class1", "CheckedIntField")]
     [InlineData("Class2", "Class2IntField")]
