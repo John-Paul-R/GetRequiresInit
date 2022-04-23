@@ -1,34 +1,33 @@
-﻿namespace AssemblyToProcess
+﻿namespace AssemblyToProcess;
+
+using System;
+using GetRequiresInit;
+
+class Class1
 {
-    using System;
-    using GetRequiresInit;
+    public int IntField { get; set; }
 
-    class Class1
+    private bool _initFlag_CheckedIntField = false;
+    private int _checkedIntField;
+    public int CheckedIntField
     {
-        public int IntField { get; set; }
-
-        private bool _initFlag_CheckedIntField = false;
-        private int _checkedIntField;
-        public int CheckedIntField
+        get
         {
-            get
-            {
-                if (!_initFlag_CheckedIntField) {
-                    throw new InvalidOperationException();
-                }
-                return _checkedIntField;
+            if (!_initFlag_CheckedIntField) {
+                throw new InvalidOperationException();
             }
-            set
-            {
-                _checkedIntField = value;
-                _initFlag_CheckedIntField = true;
-            }
+            return _checkedIntField;
+        }
+        set
+        {
+            _checkedIntField = value;
+            _initFlag_CheckedIntField = true;
         }
     }
+}
 
-    [GetRequiresInit]
-    class Class2
-    {
-        public int Class2IntField { get; set; }
-    }
+[GetRequiresInit]
+class Class2
+{
+    public int Class2IntField { get; set; }
 }
