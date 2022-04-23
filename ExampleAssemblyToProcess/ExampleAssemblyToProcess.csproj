@@ -5,6 +5,7 @@
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>AssemblyToProcess</RootNamespace>
+    <DisableFody>true</DisableFody>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\GetRequiresInit\GetRequiresInit.csproj" />
