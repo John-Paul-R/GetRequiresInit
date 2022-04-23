@@ -138,7 +138,6 @@ public class ModuleWeaver :
     {
         var method = new MethodDefinition("World", MethodAttributes.Public, TypeSystem.StringReference);
         var processor = method.Body.GetILProcessor();
-        // processor.Emit();
         processor.Emit(OpCodes.Ldstr, "Hello World");
         processor.Emit(OpCodes.Ret);
         newType.Methods.Add(method);
@@ -150,7 +149,6 @@ public class ModuleWeaver :
         var fieldName = $"_initFlag_{propertyDefinition.Name}";
         var initFlagField = new FieldDefinition(fieldName, FieldAttributes.Private, TypeSystem.BooleanReference);
         propertyDefinition.DeclaringType.Fields.Add(initFlagField);
-        // throw new Exception();
 
         var setterIlProcessor = propertyDefinition.SetMethod.Body.GetILProcessor();
         var retInstruction = propertyDefinition.SetMethod.Body.Instructions.Last();
@@ -162,15 +160,12 @@ public class ModuleWeaver :
 
         var getterIlProcessor = propertyDefinition.GetMethod.Body.GetILProcessor();
         var getInstructions = getterIlProcessor.Body.Instructions.ToList();
-        // var falseLabel = getterIlProcessor.
         getterIlProcessor.Body.Instructions.Clear();
         getterIlProcessor.Emit(OpCodes.Nop);
         getterIlProcessor.Emit(OpCodes.Ldarg_0);
         getterIlProcessor.Emit(OpCodes.Ldfld, initFlagField);
         getterIlProcessor.Emit(OpCodes.Ldc_I4_0);
         getterIlProcessor.Emit(OpCodes.Ceq);
-        // getterIlProcessor.Emit(OpCodes.Stloc_0);
-        // getterIlProcessor.Emit(OpCodes.Ldloc_0);
         var lbl_elseEntryPoint_6 = getterIlProcessor.Create(OpCodes.Nop);
         getterIlProcessor.Emit(OpCodes.Brfalse, lbl_elseEntryPoint_6);
         
@@ -182,7 +177,7 @@ public class ModuleWeaver :
         var lbl_elseEnd_8 = getterIlProcessor.Create(OpCodes.Nop);
         getterIlProcessor.Append(lbl_elseEntryPoint_6);
         getterIlProcessor.Append(lbl_elseEnd_8);
-            // .Body.OptimizeMacros();
+        getterIlProcessor.Body.OptimizeMacros();
         // end if (!_initFlag_CheckedIntField)
         
         //return _checkedIntField;
