@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <Authors>John Paul Rutigliano</Authors>
+    <Copyright>Copyright $([System.DateTime]::UtcNow.ToString(yyyy)).</Copyright>
+    <Description>Injects init-checking logic for auto-property getters.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!-- PackageTags are optional. Defaults to 'ILWeaving, Fody, Cecil, AOP' -->
+    <PackageTags>ILWeaving, Fody, Cecil, AOP</PackageTags>
+    <PackageOutputPath>$(SolutionDir)../nugets</PackageOutputPath>
+    <PackageProjectUrl>https://github.com/John-Paul-R/GetRequiresInit/tree/master/GetRequiresInit</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/John-Paul-R/GetRequiresInit/master/GetRequiresInit/package_icon.png</PackageIconUrl>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="6.6.0" PrivateAssets="none" />
+    <PackageReference Include="FodyPackaging" Version="6.6.0" PrivateAssets="All" />
+  </ItemGroup>
+</Project>

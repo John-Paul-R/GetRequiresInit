@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="6.6.0" PrivateAssets="all" />
+    <ProjectReference Include="..\GetRequiresInit\GetRequiresInit.csproj" />
+    <WeaverFiles Include="$(SolutionDir)GetRequiresInit.Fody\bin\$(Configuration)\net6.0\GetRequiresInit.Fody.dll" />
+  </ItemGroup>
+</Project>
