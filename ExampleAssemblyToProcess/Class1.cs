@@ -5,8 +5,6 @@ using GetRequiresInit;
 
 class Class1
 {
-    public int IntField { get; set; }
-
     private bool _initFlag_CheckedIntField = false;
     private int _checkedIntField;
     public int CheckedIntField
@@ -30,4 +28,10 @@ class Class1
 class Class2
 {
     public int Class2IntField { get; set; }
+}
+
+class Class3
+{
+    [GetRequiresInit]
+    public int Class3IntField { get; set; }
 }

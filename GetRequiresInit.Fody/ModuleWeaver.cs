@@ -41,11 +41,23 @@ public class ModuleWeaver :
         var typesToProcess = ModuleDefinition.Types
             .Where(t => t.HasCustomAttributes && t.CustomAttributes.Any(AttributeSelector))
             .ToList();
-        var propsToProcess = typesToProcess
-            .SelectMany(t => t.Properties);
         
-        foreach (var typeToProcess in typesToProcess) {
-            typeToProcess.CustomAttributes.Remove(typeToProcess.CustomAttributes.Single(AttributeSelector));
+        var propsToProcess = typesToProcess
+            .SelectMany(t => t.Properties)
+            .ToList();
+
+        var annotatedProps = ModuleDefinition.Types
+            .SelectMany(t => t.Properties)
+            .Where(p => p.HasCustomAttributes && p.CustomAttributes.Any(AttributeSelector));
+        
+        propsToProcess.AddRange(annotatedProps);
+
+        // TODO: Implement or remove `removeAttributes` config option
+        bool removeAttributes = false;
+        if (removeAttributes) {
+            foreach (var typeToProcess in typesToProcess) {
+                typeToProcess.CustomAttributes.Remove(typeToProcess.CustomAttributes.Single(AttributeSelector));
+            }
         }
 
         foreach (var prop in propsToProcess) {

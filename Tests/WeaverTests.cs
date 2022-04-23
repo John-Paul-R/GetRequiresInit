@@ -47,13 +47,15 @@ public class WeaverTests
         Assert.True(threwInvalidOperationException);
     }
     
-    [Fact]
-    public void ValidateGetThrowsErrorWhenNoInit()
+    [Theory]
+    [InlineData("Class2", "Class2IntField")]
+    [InlineData("Class3", "Class3IntField")]
+    public void ValidateGetThrowsErrorWhenNoInit(string className, string propertyName)
     {
-        var type = testResult.Assembly.GetType("AssemblyToProcess.Class2")!;
+        var type = testResult.Assembly.GetType($"AssemblyToProcess.{className}")!;
         var instance = (dynamic)Activator.CreateInstance(type)!;
 
-        var method = type.GetProperty("Class2IntField")!.GetMethod;
+        var method = type.GetProperty(propertyName)!.GetMethod;
 
         // var field = type.GetField("_initFlag_Class2IntField", BindingFlags.NonPublic | BindingFlags.Instance);
         
@@ -70,13 +72,15 @@ public class WeaverTests
         Assert.True(threwInvalidOperationException);
     }
 
-    [Fact]
-    public void ValidateGetSucceedsWhenInit()
+    [Theory]
+    [InlineData("Class2", "Class2IntField")]
+    [InlineData("Class3", "Class3IntField")]
+    public void ValidateGetSucceedsWhenInit(string className, string propertyName)
     {
-        var type = testResult.Assembly.GetType("AssemblyToProcess.Class2")!;
+        var type = testResult.Assembly.GetType($"AssemblyToProcess.{className}")!;
         var instance = (dynamic)Activator.CreateInstance(type)!;
 
-        var prop = type.GetProperty("Class2IntField")!;
+        var prop = type.GetProperty(propertyName)!;
         var getMethod = prop.GetMethod!;
         var setMethod = prop.SetMethod!;
 
