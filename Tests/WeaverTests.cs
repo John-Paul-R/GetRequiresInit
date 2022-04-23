@@ -23,27 +23,9 @@ public class WeaverTests
 
         Assert.Equal("Hello World", instance.World());
     }
-    
-    [Fact]
-    public void ValidateManualGetThrowsErrorWhenNoInit()
-    {
-        var type = testResult.Assembly.GetType("AssemblyToProcess.Class1")!;
-        var instance = (dynamic)Activator.CreateInstance(type)!;
 
-        var method = type.GetProperty("CheckedIntField")!.GetMethod;
-        bool threwInvalidOperationException = false;
-        try {
-            method!.Invoke(instance, Array.Empty<object?>());
-        } catch (TargetInvocationException ex) {
-            if (ex.InnerException is InvalidOperationException) {
-                threwInvalidOperationException = true;
-            }
-        }
-
-        Assert.True(threwInvalidOperationException);
-    }
-    
     [Theory]
+    [InlineData("Class1", "CheckedIntField")]
     [InlineData("Class2", "Class2IntField")]
     [InlineData("Class3", "Class3IntField")]
     public void ValidateGetThrowsErrorWhenNoInit(string className, string propertyName)
@@ -67,6 +49,7 @@ public class WeaverTests
     }
 
     [Theory]
+    [InlineData("Class1", "CheckedIntField")]
     [InlineData("Class2", "Class2IntField")]
     [InlineData("Class3", "Class3IntField")]
     public void ValidateGetSucceedsWhenInit(string className, string propertyName)
