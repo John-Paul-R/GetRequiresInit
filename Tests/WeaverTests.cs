@@ -24,12 +24,12 @@ public class WeaverTests
         var type = testResult.Assembly.GetType($"AssemblyToProcess.{className}")!;
         var instance = (dynamic)Activator.CreateInstance(type)!;
 
-        var method = type.GetProperty(propertyName)!.GetMethod;
+        var getMethod = type.GetProperty(propertyName)!.GetMethod;
 
         bool threwInvalidOperationException = false;
         int outVal = 1031231;
         try {
-            outVal = method!.Invoke(instance, Array.Empty<object?>());
+            outVal = getMethod!.Invoke(instance, Array.Empty<object?>());
         } catch (TargetInvocationException ex) {
             if (ex.InnerException is InvalidOperationException) {
                 threwInvalidOperationException = true;
@@ -68,8 +68,6 @@ public class WeaverTests
         Assert.False(threwInvalidOperationException);
         Assert.Equal(valueToSet, outVal);
     }
-
-
 }
 
 #endregion

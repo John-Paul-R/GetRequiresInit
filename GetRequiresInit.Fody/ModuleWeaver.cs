@@ -53,7 +53,7 @@ public class ModuleWeaver :
         }
 
         foreach (var prop in propsToProcess) {
-            AddInitField(prop);
+            ProcessProperty(prop);
         }
         
         WriteInfo("Added init check fields, and modified annotated property get/set methods.");
@@ -71,21 +71,25 @@ public class ModuleWeaver :
 
     #endregion
 
-    void AddInitField(PropertyDefinition propertyDefinition)
+    private void ProcessProperty(PropertyDefinition propertyDefinition)
+    {
+        var initFlagField = CreateInitFlagField(propertyDefinition);
+        propertyDefinition.DeclaringType.Fields.Add(initFlagField);
+        ProcessSetter(propertyDefinition, initFlagField);
+        ProcessGetter(propertyDefinition, initFlagField);
+    }
+
+    private FieldDefinition CreateInitFlagField(PropertyDefinition propertyDefinition)
     {
         var fieldName = $"_initFlag_{propertyDefinition.Name}";
-        var initFlagField = new FieldDefinition(fieldName, FieldAttributes.Private, TypeSystem.BooleanReference);
-        propertyDefinition.DeclaringType.Fields.Add(initFlagField);
+        return new FieldDefinition(fieldName, FieldAttributes.Private, TypeSystem.BooleanReference);
+    }
 
-        var setterIlProcessor = propertyDefinition.SetMethod.Body.GetILProcessor();
-        var retInstruction = propertyDefinition.SetMethod.Body.Instructions.Last();
-        setterIlProcessor.Remove(retInstruction);
-        setterIlProcessor.Emit(OpCodes.Ldarg_0);
-        setterIlProcessor.Emit(OpCodes.Ldc_I4_1);
-        setterIlProcessor.Emit(OpCodes.Stfld, initFlagField);
-        setterIlProcessor.Append(retInstruction);
-
+    private void ProcessGetter(PropertyDefinition propertyDefinition, FieldDefinition initFlagField)
+    {
         var getterIlProcessor = propertyDefinition.GetMethod.Body.GetILProcessor();
+
+        getterIlProcessor.Body.SimplifyMacros();
         var getInstructions = getterIlProcessor.Body.Instructions.ToList();
         getterIlProcessor.Body.Instructions.Clear();
         getterIlProcessor.Emit(OpCodes.Nop);
@@ -93,24 +97,42 @@ public class ModuleWeaver :
         getterIlProcessor.Emit(OpCodes.Ldfld, initFlagField);
         getterIlProcessor.Emit(OpCodes.Ldc_I4_0);
         getterIlProcessor.Emit(OpCodes.Ceq);
+        // TODO: IL seems to include these, but when I add, I get errors. Verify these are not needed.
+        // getterIlProcessor.Emit(OpCodes.Stloc_0);
+        // getterIlProcessor.Emit(OpCodes.Ldloc_0);
         var lbl_elseEntryPoint_6 = getterIlProcessor.Create(OpCodes.Nop);
-        getterIlProcessor.Emit(OpCodes.Brfalse, lbl_elseEntryPoint_6);
-        
+        getterIlProcessor.Emit(OpCodes.Brfalse_S, lbl_elseEntryPoint_6);
+
         //if body
-        
+
         //throw new InvalidOperationException();
-        getterIlProcessor.Emit(OpCodes.Newobj, ModuleDefinition.Assembly.MainModule.ImportReference(TypeHelpers.ResolveMethod("System.InvalidOperationException", ".ctor",BindingFlags.Default|BindingFlags.Instance|BindingFlags.Public,"")));
+        getterIlProcessor.Emit(OpCodes.Newobj, ModuleDefinition.Assembly.MainModule.ImportReference(TypeHelpers.ResolveMethod("System.InvalidOperationException", ".ctor", BindingFlags.Default | BindingFlags.Instance | BindingFlags.Public, "")));
         getterIlProcessor.Emit(OpCodes.Throw);
         var lbl_elseEnd_8 = getterIlProcessor.Create(OpCodes.Nop);
         getterIlProcessor.Append(lbl_elseEntryPoint_6);
         getterIlProcessor.Append(lbl_elseEnd_8);
-        getterIlProcessor.Body.OptimizeMacros();
         // end if (!_initFlag_CheckedIntField)
-        
+
         //return _checkedIntField;
         foreach (var instruction in getInstructions) {
             getterIlProcessor.Append(instruction);
         }
+
+        getterIlProcessor.Body.OptimizeMacros();
+    }
+
+    private static void ProcessSetter(PropertyDefinition propertyDefinition, FieldDefinition initFlagField)
+    {
+        var setterIlProcessor = propertyDefinition.SetMethod.Body.GetILProcessor();
+
+        setterIlProcessor.Body.SimplifyMacros();
+        var retInstruction = propertyDefinition.SetMethod.Body.Instructions.Last();
+        setterIlProcessor.Remove(retInstruction);
+        setterIlProcessor.Emit(OpCodes.Ldarg_0);
+        setterIlProcessor.Emit(OpCodes.Ldc_I4_1);
+        setterIlProcessor.Emit(OpCodes.Stfld, initFlagField);
+        setterIlProcessor.Append(retInstruction);
+        setterIlProcessor.Body.OptimizeMacros();
     }
 
     #region ShouldCleanReference

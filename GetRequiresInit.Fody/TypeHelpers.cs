@@ -25,9 +25,9 @@ public static class TypeHelpers
         {
             var resolvedCtor = declaringType.GetConstructor(
                 bindingFlags,
-                null,
+                binder: null,
                 paramTypes.Select(Type.GetType).ToArray(),
-                null);
+                modifiers: null);
 
             if (resolvedCtor == null)
             {
@@ -39,9 +39,9 @@ public static class TypeHelpers
             
         var resolvedMethod = declaringType.GetMethod(methodName,
             bindingFlags,
-            null,
+            binder: null,
             paramTypes.Select(Type.GetType).ToArray(),
-            null);
+            modifiers: null);
 
         if (resolvedMethod == null)
         {
