@@ -14,11 +14,6 @@ public class Class1
         {
             if (!_initFlag_CheckedIntField) {
                 throw new InvalidOperationException();
-                // "Get was called before Set") {
-                //     Data = {
-                //         ["Property"] = nameof(CheckedIntField),
-                //     },
-                // };
             }
             return _checkedIntField;
         }
@@ -40,24 +35,4 @@ public class Class3
 {
     [GetRequiresInit]
     public int Class3IntField { get; set; }
-}
-
-class TestClass<TDerived> where TDerived : TestClass<TDerived>
-{
-    
-}
-
-class TestClassImpl : TestClass<TestClassImpl>
-{
-    
-}
-
-class ImplThing
-{
-    private List<TestClass<T>> GetItems<T>() where T : TestClass<T>
-    {
-        return new List<TestClass<T>>();
-    }
-
-    private List<TestClassImpl> List { get; set; } = null!;
 }
